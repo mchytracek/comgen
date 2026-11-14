@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Macht aus einem frischen Klon des Templates ein eigenes Comic-Repo.
 #
-#   git clone <comgen-template-url> mein-comic && cd mein-comic
+#   git clone https://github.com/mchytracek/comgen.git mein-comic && cd mein-comic
 #   scripts/init.sh "Wie Rechnungen sich selbst buchen" [--format print-a4] [--style explainer] [--purpose explainer]
 #
 # Optionen (zusätzlich zu denen von tools/init_comic.py: --format, --style, --purpose, --lang, --slug):

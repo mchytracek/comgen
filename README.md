@@ -45,7 +45,7 @@ scripts/setup.sh
 Pro Comic:
 
 ```bash
-git clone <comgen-url> rechnungs-comic && cd rechnungs-comic
+git clone https://github.com/mchytracek/comgen.git rechnungs-comic && cd rechnungs-comic
 ```
 
 ```bash
