@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "comgen comic.json",
+  "description": "Datenvertrag aller Phasen. Geprüft wird mit `python3 tools/comic.py validate` (inkl. Querbezügen: Raster ↔ Panelzahl, cast-IDs).",
+  "type": "object",
+  "required": ["title", "slug", "language", "format", "style", "cast", "pages"],
+  "properties": {
+    "title": { "type": "string" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "status": { "enum": ["brief", "cast", "story", "script", "panels", "lettering", "review", "done"] },
+    "language": { "type": "string" },
+    "purpose": { "enum": ["explainer", "story", "product", "social"] },
+    "format": { "enum": ["print-a4", "print-us", "web", "social-4x5", "social-1x1", "social-9x16"] },
+    "pageNumbers": { "type": "boolean", "description": "Seitenzahlen (nur Druckformate, Default true)" },
+    "style": {
+      "type": "object",
+      "required": ["imagePrompt"],
+      "properties": {
+        "preset": { "type": "string", "description": "Name aus templates/styles.json" },
+        "imagePrompt": { "type": "string", "description": "Stil-Suffix für jedes Panel (englisch, endet mit 'no text, no letters, no speech bubbles')" },
+        "castStyle": { "type": "string", "description": "Stil für die Figurenreferenzen (Foto → Comicfigur)" },
+        "palette": { "type": "object", "properties": { "paper": {}, "ink": {}, "caption": {}, "accent": {} } },
+        "fonts": { "type": "object", "properties": { "dialogue": {}, "caption": {}, "sfx": {} } },
+        "lettering": { "type": "object", "properties": { "size": { "type": "number", "description": "Schriftgröße in % der Seitenbreite" }, "uppercase": { "type": "boolean" } } }
+      }
+    },
+    "cast": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "look": { "type": "string", "description": "Aussehen in Worten (englisch) – für den Bildaufbau" },
+          "personality": { "type": "string", "description": "Wesen, Sprechweise – für Story und Dialoge" },
+          "photo": { "type": "string", "description": "(auto, cast.py) Foto relativ zu comic/" },
+          "ref": { "type": "string", "description": "(auto, cast.py) Comic-Referenz relativ zu comic/" },
+          "refSeed": { "type": "integer" },
+          "refProvisional": { "type": "boolean", "description": "(auto) automatisch gewählt, noch nicht bestätigt" }
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "panels"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^p[0-9]{2,3}$" },
+          "beat": { "type": "string" },
+          "layout": { "description": "benanntes Raster (comic.py layouts) oder Zeilen mit relativen Breiten, z. B. [[1,1],[2,1],[1]]", "oneOf": [ { "type": "string" }, { "type": "array", "items": { "type": "array", "items": { "type": "number" } } } ] },
+          "rows": { "type": "array", "items": { "type": "number" }, "description": "relative Zeilenhöhen" },
+          "fullBleed": { "type": "boolean", "description": "ein Panel über die ganze Seite inkl. Beschnitt (Cover, Splash)" },
+          "panels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^p[0-9]{2,3}-[0-9]+$" },
+                "shot": { "enum": ["establishing", "wide", "full", "medium", "close", "extreme-close", "over-shoulder", "bird", "worm"] },
+                "prompt": { "type": "string", "description": "Bildinhalt (englisch): Ort, Handlung, Requisiten – Figuren über cast" },
+                "cast": { "type": "array", "items": { "oneOf": [ { "type": "string" }, { "type": "object", "required": ["id"], "properties": { "id": {}, "where": { "type": "string" }, "action": { "type": "string" }, "expression": { "type": "string" }, "wear": { "type": "string" } } } ] } },
+                "seed": { "type": "integer" },
+                "focus": { "type": "object", "description": "Bildausschnitt bei Beschnitt (object-position), Anteile 0–1", "properties": { "x": {}, "y": {} } },
+                "bubbles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["text"],
+                    "properties": {
+                      "type": { "enum": ["speech", "thought", "whisper", "shout", "caption", "sfx"] },
+                      "who": { "type": "string", "description": "cast-id oder 'off'" },
+                      "text": { "type": "string" },
+                      "pos": { "oneOf": [ { "enum": ["tl", "tc", "tr", "ml", "mc", "mr", "bl", "bc", "br"] }, { "type": "object", "properties": { "x": {}, "y": {}, "w": {} } } ] },
+                      "tail": { "oneOf": [ { "const": "none" }, { "type": "object", "properties": { "x": {}, "y": {} } } ] },
+                      "rot": { "type": "number", "description": "nur sfx: Drehung in Grad" },
+                      "size": { "type": "number", "description": "Faktor auf die Schriftgröße" }
+                    }
+                  }
+                },
+                "assets": { "type": "object", "description": "(auto, panels.py) Pfade relativ zu comic/", "properties": { "image": {}, "base": {} } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

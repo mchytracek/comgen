@@ -1,0 +1,18 @@
+# --- generierte Medien (groß, reproduzierbar) ---
+comic/assets/
+comic/pages/
+comic/review/
+comic/.work/
+# Fotos echter Personen sind personenbezogen → nie versionieren
+comic/cast/*/photo*
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+
+# --- lokal ---
+.claude/settings.local.json
+.comgen.env
+.DS_Store
+.env

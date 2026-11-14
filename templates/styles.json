@@ -1,0 +1,37 @@
+{
+  "explainer": {
+    "label": "Erklär-Comic: freundlich, flache Farben, klare Konturen (Default)",
+    "imagePrompt": "friendly modern comic illustration, clean confident black outlines of even weight, flat colors with soft cel shading, warm limited palette, simple readable shapes, uncluttered backgrounds, no text, no letters, no speech bubbles",
+    "castStyle": "friendly modern comic illustration, clean confident black outlines, flat colors with soft cel shading, warm palette",
+    "palette": { "paper": "#FFFFFF", "ink": "#111111", "caption": "#FFF3B0", "accent": "#E4572E" },
+    "fonts": { "dialogue": "Comic Neue", "caption": "Comic Neue", "sfx": "Bangers" }
+  },
+  "ligne-claire": {
+    "label": "Europäisch, Ligne claire: gleichmäßige Linie, flache helle Farben, detaillierte Hintergründe",
+    "imagePrompt": "European ligne claire comic art, clean uniform black ink outlines, flat bright colors without gradients, no hatching, detailed realistic backgrounds, clear readable staging, no text, no letters, no speech bubbles",
+    "castStyle": "European ligne claire comic art, clean uniform black ink outlines, flat bright colors without gradients",
+    "palette": { "paper": "#FFFFFF", "ink": "#111111", "caption": "#FFF6D5", "accent": "#C0392B" },
+    "fonts": { "dialogue": "Comic Neue", "caption": "Comic Neue", "sfx": "Bangers" }
+  },
+  "us-comic": {
+    "label": "US-Comic: kräftige Tusche, dynamische Schatten, Rasterpunkte, satte Farben",
+    "imagePrompt": "American comic book art, bold black inks with dynamic shadows, cel shading, subtle halftone dot texture, saturated colors, dramatic lighting and angles, no text, no letters, no speech bubbles",
+    "castStyle": "American comic book art, bold black inks, cel shading, subtle halftone dots, saturated colors",
+    "palette": { "paper": "#FFFFFF", "ink": "#0A0A0A", "caption": "#FFE45C", "accent": "#D62828" },
+    "fonts": { "dialogue": "Comic Neue", "caption": "Comic Neue", "sfx": "Bangers" }
+  },
+  "manga": {
+    "label": "Manga: schwarz-weiß, Rastertöne, ausdrucksstarke Linien",
+    "imagePrompt": "black and white manga art, expressive clean line art, screentone shading, high contrast, dynamic composition, speed lines where there is motion, no text, no letters, no speech bubbles",
+    "castStyle": "black and white manga art, expressive clean line art, screentone shading",
+    "palette": { "paper": "#FFFFFF", "ink": "#000000", "caption": "#FFFFFF", "accent": "#000000" },
+    "fonts": { "dialogue": "Comic Neue", "caption": "Comic Neue", "sfx": "Bangers" }
+  },
+  "graphic-novel": {
+    "label": "Graphic Novel: malerisch, gedeckte Farben, Tusche und Aquarell",
+    "imagePrompt": "painterly graphic novel art, ink lines with watercolor washes, muted earthy colors, atmospheric lighting, textured paper feel, no text, no letters, no speech bubbles",
+    "castStyle": "painterly graphic novel art, ink lines with watercolor washes, muted earthy colors",
+    "palette": { "paper": "#F7F2E8", "ink": "#1B1B1B", "caption": "#EFE3C8", "accent": "#8C3B2A" },
+    "fonts": { "dialogue": "Comic Neue", "caption": "Comic Neue", "sfx": "Bangers" }
+  }
+}

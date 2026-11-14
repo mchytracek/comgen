@@ -1,0 +1,30 @@
+{
+  "title": "Titel",
+  "slug": "slug",
+  "status": "brief",
+  "language": "de",
+  "purpose": "explainer",
+  "format": "print-a4",
+  "style": {
+    "preset": "explainer",
+    "imagePrompt": "",
+    "castStyle": "",
+    "palette": {},
+    "fonts": {}
+  },
+  "cast": [],
+  "pages": [
+    {
+      "id": "p01",
+      "beat": "Beispielseite – wird in Phase 4 (Skill panels) ersetzt",
+      "layout": "classic-5",
+      "panels": [
+        { "id": "p01-1", "shot": "establishing", "prompt": "a bright open-plan office in the morning, large windows, plants, people arriving with coffee", "bubbles": [ { "type": "caption", "text": "Montag, 8:30 Uhr." } ] },
+        { "id": "p01-2", "shot": "medium", "prompt": "a young woman at her desk looks at a huge stack of paper invoices, overwhelmed expression", "bubbles": [ { "type": "thought", "text": "Schon wieder 200 Rechnungen …" } ] },
+        { "id": "p01-3", "shot": "wide", "prompt": "the paper stack topples over and invoices fly through the air across the office", "bubbles": [ { "type": "sfx", "text": "WUSCH!", "pos": "tc" } ] },
+        { "id": "p01-4", "shot": "close", "prompt": "a friendly colleague leans over the partition wall with a smile and holds up a tablet", "bubbles": [ { "type": "speech", "text": "Warum lässt du das nicht die Software machen?", "pos": "tl" } ] },
+        { "id": "p01-5", "shot": "medium", "prompt": "the young woman looks at the tablet, curious and relieved, the colleague points at the screen", "bubbles": [ { "type": "speech", "text": "Zeig mal!", "pos": "tr" } ] }
+      ]
+    }
+  ]
+}
