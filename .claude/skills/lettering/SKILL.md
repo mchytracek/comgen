@@ -10,7 +10,7 @@ Schriften: Comic Neue (Dialog), Bangers (Soundwörter) aus `fonts/` (OFL); Fallb
 
 ```bash
 python3 tools/layout.py                 # alle Seiten → comic/pages/<id>.png (+ PDF bei Druckformaten)
-python3 tools/layout.py --page p02      # eine Seite
+python3 tools/layout.py --page p02      # eine Seite (PNG; das PDF wird immer komplett neu gebaut)
 python3 tools/layout.py --pdf           # PDF auch für Web/Social
 python3 tools/layout.py sheet           # Übersicht → comic/review/sheet.png
 ```

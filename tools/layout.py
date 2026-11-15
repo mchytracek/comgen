@@ -2,7 +2,7 @@
 """Setzt die Comic-Seiten: Panels, Sprechblasen, Erzählerkästen, Soundwörter → PNG/PDF.
 
   python3 tools/layout.py                  # alle Seiten → comic/pages/<id>.png (+ PDF bei Druckformaten)
-  python3 tools/layout.py --page p01,p02
+  python3 tools/layout.py --page p01,p02   # nur diese PNGs; das PDF enthält immer alle Seiten
   python3 tools/layout.py --pdf            # PDF auch für Web/Social erzeugen
   python3 tools/layout.py --no-png         # nur PDF
   python3 tools/layout.py sheet            # Übersicht aller Seiten → comic/review/sheet.png
@@ -272,6 +272,8 @@ def cmd_render(a) -> None:
                 die(f"Chrome-Screenshot {pg['id']} fehlgeschlagen:\n{cp.stderr[-1500:]}")
             print(f"✔ pages/{png.name}  ({geo['W']}×{geo['H']})")
     if a.pdf or c["format"].startswith("print") or a.no_png:
+        # immer das ganze Heft – mit --page entstünde sonst ein PDF, das nur diese Seiten enthält
+        pages = list(enumerate(c["pages"], 1))
         f = hdir / "all.html"
         f.write_text(document(c, [page_html(c, pg, geo, pdir, i if numbers else None) for i, pg in pages], geo),
                      encoding="utf-8")
@@ -310,7 +312,7 @@ def main():
     ap.add_argument("--dir", dest="project", help="Comicordner (Default: comic/)")
     sub = ap.add_subparsers(dest="cmd")
     sub.add_parser("sheet", help="Übersicht aller Seiten")
-    ap.add_argument("--page", help="Seiten-IDs, kommagetrennt")
+    ap.add_argument("--page", help="Seiten-IDs, kommagetrennt (nur PNGs; das PDF enthält immer alle Seiten)")
     ap.add_argument("--pdf", action="store_true", help="PDF auch für Web/Social")
     ap.add_argument("--no-png", action="store_true", help="nur PDF")
     a = ap.parse_args()
