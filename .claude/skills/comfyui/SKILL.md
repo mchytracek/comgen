@@ -29,7 +29,9 @@ Figuren mit Comic-Referenz ein – gruppenweise mit einem **Vorlagenblatt** (Ref
 2. alle übrigen Figuren in einem Durchgang,
 3. jede Hauptfigur (`cast[].hero: true`) allein, zuletzt – sie wird danach nicht mehr überschrieben.
 
-Jeder Durchgang bekommt einen eigenen Seed. Das ist deutlich sauberer als ein Durchgang pro
+Mehr als 3 Figuren einer Gruppe werden in Blöcke zu höchstens 3 geteilt (`--group-max`), in
+der Reihenfolge von `panel.cast` – Figuren, die im Bild nebeneinander stehen, dort also
+nebeneinander aufführen. Jeder Durchgang bekommt einen eigenen Seed. Das ist deutlich sauberer als ein Durchgang pro
 Figur (`--swap single`, die alte Variante): weniger Bildrauschen, weniger doppelte Figuren.
 `where` sagt, welche Figur im Bild gemeint ist; `cast[].kind` sagt, was sie ist („girl“,
 „grandfather“, „ginger spitz dog“) – ohne `kind` heißt jede Figur „person“, und Tiere werden

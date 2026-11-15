@@ -16,7 +16,8 @@ Ablauf je Panel:
      (Prompt = Einstellung + panel.prompt + Aussehen der Figuren + style.imagePrompt).
   2. Qwen Image 2.1 Edit setzt die Figuren mit Comic-Referenz ein. Standard (`--swap group`):
      ein Durchgang pro Gruppe mit einem Vorlagenblatt (Referenzen nebeneinander):
-       a) Tiere (`cast[].animal`)  b) übrige Figuren  c) jede Hauptfigur (`cast[].hero`) allein.
+       a) Tiere (`cast[].animal`)  b) übrige Figuren  c) jede Hauptfigur (`cast[].hero`) allein;
+     mehr als 3 Figuren einer Gruppe werden in Blöcke geteilt (Reihenfolge wie in panel.cast).
      Das ist deutlich sauberer als ein Durchgang pro Figur (`--swap single`): weniger Rauschen,
      weniger doppelte Figuren. `where` sagt, welche Figur im Bild gemeint ist, `kind` was sie ist.
 Ergebnis: comic/assets/panels/<id>.png (+ <id>_base.png, <id>_g0.png …), Pfade in panel.assets.
@@ -93,12 +94,17 @@ KEEP = ("Keep everything else in <image1> unchanged: all other characters and an
         "the sky, the lighting, the camera framing and the visual style.")
 
 
-def swap_groups(members: list[dict]) -> list[list[dict]]:
-    """Tiere → übrige Figuren → jede Hauptfigur einzeln (zuletzt = am wenigsten überschrieben)."""
+GROUP_MAX = 3  # mehr Figuren pro Vorlagenblatt → Gesichter werden unsauber
+
+
+def swap_groups(members: list[dict], size: int = GROUP_MAX) -> list[list[dict]]:
+    """Tiere → übrige Figuren → jede Hauptfigur einzeln (zuletzt = am wenigsten überschrieben).
+    Große Gruppen werden in der Reihenfolge von panel.cast in Blöcke zu höchstens `size` geteilt."""
     animals = [m for m in members if m.get("animal")]
     others = [m for m in members if not m.get("animal") and not m.get("hero")]
     heroes = [[m] for m in members if m.get("hero") and not m.get("animal")]
-    return [g for g in (animals, others, *heroes) if g]
+    chunk = lambda g: [g[i:i + size] for i in range(0, len(g), size)]  # noqa: E731
+    return [g for g in (*chunk(animals), *chunk(others), *heroes) if g]
 
 
 def group_prompt(ms: list[dict]) -> str:
@@ -195,7 +201,7 @@ def cmd_generate(a) -> None:
                     shutil.copyfile(out, base)
                     cur = base
             if a.swap == "group":
-                for k, g in enumerate(swap_groups(swappable)):
+                for k, g in enumerate(swap_groups(swappable, a.group_max)):
                     print(f"  Durchgang {k + 1}: {', '.join(m['id'] for m in g)}")
                     sheet = pdir / ".work" / f"sheet_{pid}_{k}.png"
                     if not a.dry_run:
@@ -301,6 +307,8 @@ def main():
     ap.add_argument("--reswap", action="store_true", help="nur Figuren neu einsetzen (Bildaufbau bleibt)")
     ap.add_argument("--swap", choices=["group", "single"], default="group",
                     help="Figuren je Gruppe per Vorlagenblatt (Default) oder einzeln einsetzen")
+    ap.add_argument("--group-max", type=int, default=GROUP_MAX,
+                    help=f"höchstens so viele Figuren pro Vorlagenblatt (Default {GROUP_MAX})")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
     {"grid": cmd_grid, "edit": cmd_edit}.get(a.cmd, cmd_generate)(a)
