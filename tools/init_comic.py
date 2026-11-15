@@ -3,7 +3,7 @@
 
 Normalerweise über scripts/init.sh aufgerufen (macht zusätzlich git + ComfyUI-Adresse).
 
-  python3 tools/init_comic.py "Wie Rechnungen sich selbst buchen" [--format print-a4|print-us|web|social-4x5|social-1x1|social-9x16]
+  python3 tools/init_comic.py "Wie Rechnungen sich selbst buchen" [--format print-a4|print-us|print-a5-quer|web|social-4x5|social-1x1|social-9x16]
       [--style explainer|ligne-claire|us-comic|manga|graphic-novel] [--purpose explainer|story|product|social] [--lang de]
 """
 from __future__ import annotations

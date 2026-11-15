@@ -39,6 +39,16 @@ python3 tools/cast.py add max --name "Max" --role "IT-Kollege" \
 
 Z-Image erzeugt Varianten aus der Beschreibung; sonst wie oben (ansehen, `pick`).
 
+## Art, Tiere, Hauptfigur
+
+Pro Figur in `comic.json` ergänzen – steuert das Einsetzen in die Panels (`panels.py`):
+
+- `kind` (englisch): was die Figur ist – „girl“, „boy“, „baby“, „grandmother“, „ginger spitz dog“.
+  Ohne `kind` heißt jede Figur im Prompt „person“.
+- `animal: true` für Tiere: sie werden gemeinsam in einem eigenen Durchgang eingesetzt.
+  Tiere ohne Foto mit `cast.py render --prompt "…"` erzeugen (der Standard-Prompt beschreibt Menschen).
+- `hero: true` für die Hauptfigur(en): werden zuletzt und allein eingesetzt → beste Ähnlichkeit.
+
 ## Wesen festhalten
 
 Pro Figur in `comic.json` von Hand ergänzen: `personality` (2–3 Stichworte + Sprechweise,

@@ -10,7 +10,7 @@
     "status": { "enum": ["brief", "cast", "story", "script", "panels", "lettering", "review", "done"] },
     "language": { "type": "string" },
     "purpose": { "enum": ["explainer", "story", "product", "social"] },
-    "format": { "enum": ["print-a4", "print-us", "web", "social-4x5", "social-1x1", "social-9x16"] },
+    "format": { "enum": ["print-a4", "print-us", "print-a5-quer", "web", "social-4x5", "social-1x1", "social-9x16"] },
     "pageNumbers": { "type": "boolean", "description": "Seitenzahlen (nur Druckformate, Default true)" },
     "style": {
       "type": "object",
@@ -34,6 +34,9 @@
           "name": { "type": "string" },
           "role": { "type": "string" },
           "look": { "type": "string", "description": "Aussehen in Worten (englisch) – für den Bildaufbau" },
+          "kind": { "type": "string", "description": "Was die Figur ist, englisch, für die Prompts (\"girl\", \"grandfather\", \"ginger spitz dog\"); Default \"person\"" },
+          "animal": { "type": "boolean", "description": "Tier: wird im ersten Durchgang zusammen mit den anderen Tieren eingesetzt" },
+          "hero": { "type": "boolean", "description": "Hauptfigur: wird zuletzt und allein eingesetzt (beste Ähnlichkeit)" },
           "personality": { "type": "string", "description": "Wesen, Sprechweise – für Story und Dialoge" },
           "photo": { "type": "string", "description": "(auto, cast.py) Foto relativ zu comic/" },
           "ref": { "type": "string", "description": "(auto, cast.py) Comic-Referenz relativ zu comic/" },

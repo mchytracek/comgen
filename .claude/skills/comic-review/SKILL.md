@@ -19,8 +19,9 @@ für Details einzelne Panels (`comic/assets/panels/<id>.png`).
    (ggf. `wear`/`expression` schärfen); falsche Person ersetzt → `where` präzisieren.
 2. **Anschlüsse:** gleicher Ort sieht gleich aus, Requisiten bleiben, Tageszeit/Licht passen,
    Figuren stehen panelübergreifend auf derselben Seite (180°-Regel).
-3. **KI-Fehler:** Hände, zusätzliche Personen, Pseudotext im Bild (Schilder, Bildschirme),
-   verzerrte Gegenstände → neuer `seed` oder Prompt schärfen, `--force --only <id>`.
+3. **KI-Fehler:** Hände, zusätzliche oder doppelte Personen, fremde statt Cast-Figuren, falsche
+   Größenverhältnisse, fehlende Requisiten, Pseudotext im Bild → gezielt
+   `panels.py edit <id> "…"` (bzw. `--ref <ids>`), sonst neuer `seed`/Prompt und `--force --only <id>`.
 4. **Stil:** alle Panels im gleichen Stil; Ausreißer neu erzeugen.
 5. **Lesefluss:** Blasenreihenfolge eindeutig, Zeiger am Mund, keine Blase über Gesicht/Handlung,
    Seitenwechsel-Momente sitzen am Seitenende.

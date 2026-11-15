@@ -30,7 +30,7 @@ python3 tools/layout.py sheet           # Übersicht → comic/review/sheet.png
 
 | Format | Ausgabe | Hinweise |
 |--------|---------|----------|
-| `print-a4`, `print-us` | PNG 300 dpi + PDF mit 3 mm Beschnitt | Wichtiges ≥ 12 mm vom Rand (Satzspiegel); Seitenzahlen automatisch (`pageNumbers: false` schaltet ab); PDF ist RGB – Druckerei nach Farbprofil fragen |
+| `print-a4`, `print-us`, `print-a5-quer` | PNG 300 dpi + PDF mit 3 mm Beschnitt | Wichtiges ≥ 12 mm vom Rand (Satzspiegel); Seitenzahlen automatisch (`pageNumbers: false` schaltet ab); PDF ist RGB – Druckerei nach Farbprofil fragen |
 | `web` | PNG 1600×2400 | |
 | `social-4x5`, `social-1x1`, `social-9x16` | PNG je Slide | größere Schrift; 9:16: oben/unten ~12 % frei lassen (UI-Overlays) |
 

@@ -116,6 +116,7 @@ scripts/doctor.sh                       # Diagnose
 |------------|---------|
 | `print-a4` | 2550×3578 px (300 dpi) + PDF 216×303 mm inkl. 3 mm Beschnitt, Seitenzahlen |
 | `print-us` | US-Comicformat 6.625×10.25 in + Beschnitt |
+| `print-a5-quer` | Bilderbuch A5 quer 210×148 mm + 3 mm Beschnitt, Bilder mit 2 MP |
 | `web` | 1600×2400 px |
 | `social-4x5` | 1080×1350 px (Instagram/LinkedIn-Karussell) |
 | `social-1x1` | 1080×1080 px |

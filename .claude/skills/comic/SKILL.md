@@ -14,7 +14,7 @@ bevor du die Phase beginnst. Der Zustand liegt immer in `comic/comic.json`
 Dieses Repo ist **ein Comic** (Klon des comgen-Templates). Alles Comicspezifische liegt in `comic/`.
 
 - `comic/` fehlt → Titel, Format, Stil, Zweck erfragen bzw. ableiten, dann
-  `scripts/init.sh "<Titel>" [--format print-a4|print-us|web|social-4x5|social-1x1|social-9x16]
+  `scripts/init.sh "<Titel>" [--format print-a4|print-us|print-a5-quer|web|social-4x5|social-1x1|social-9x16]
   [--style explainer|ligne-claire|us-comic|manga|graphic-novel] [--purpose explainer|story|product|social]
   [--comfy-url http://host:8188]`. `--comfy-url` nur, wenn der User einen anderen ComfyUI-Rechner nennt.
 - `comic/` existiert → `python3 tools/comic.py show`; beim ersten offenen Schritt weitermachen.
