@@ -17,21 +17,24 @@ Briefing ─▶ Figuren ─────────▶ Story ─▶ Skript ─�
 Anna entstand aus einem (generierten) Foto, Max aus einer Beschreibung; beide wurden per
 Figurentausch in die Panels eingesetzt, Blasen und Texte setzt `tools/layout.py`.
 
-## Prinzip: ein Klon = ein Comic
+## Prinzip: ein Klon = eine Comic-Reihe
 
-Dieses Repo ist ein **Template**. Für jeden Comic klonst du es in einen eigenen Ordner und
-initialisierst es. Der Klon wird zum Git-Repo *dieses* Comics: Brief, Story und `comic.json`
-sind versioniert; Fotos, Bilder und Seiten sind git-ignoriert.
+Dieses Repo ist ein **Template**. Du klonst es in einen eigenen Ordner und initialisierst es.
+Der Klon wird zum Git-Repo *deiner* Comics – einer oder mehrere, z. B. mehrere Bände mit denselben
+Figuren. Brief, Story und `comic.json` sind versioniert; Fotos, Bilder und Seiten sind git-ignoriert.
 
 ```
-comgen (Template)                   mein-comic (Klon)
+comgen (Template)                   meine-comics (Klon)
 ├── .claude/skills/ ─┐              ├── .claude/ tools/ comfy/ …   ← Template-Code
-├── tools/           │  git clone   └── comic/                     ← gehört dem Comic
-├── comfy/workflows/ ├───────────▶      ├── brief.md  story.md  comic.json
-├── templates/       │  init.sh         ├── cast/<id>/photo.jpg   (Fotos, ignoriert)
-├── fonts/           │                  ├── assets/cast/<id>.png  (Comicfiguren)
-└── scripts/        ─┘                  ├── assets/panels/        (Panel-Bilder)
-                                        └── pages/                (PNG je Seite, PDF)
+├── tools/           │  git clone   ├── comic → comics/02-…        ← Verweis auf den aktiven Comic
+├── comfy/workflows/ ├───────────▶  └── comics/
+├── templates/       │  init.sh         ├── 01-erster-band/
+├── fonts/           │                  └── 02-zweiter-band/
+└── scripts/        ─┘                      ├── brief.md  story.md  comic.json
+                                            ├── cast/<id>/photo.jpg   (Fotos, ignoriert)
+                                            ├── assets/cast/<id>.png  (Comicfiguren)
+                                            ├── assets/panels/        (Panel-Bilder)
+                                            └── pages/                (PNG je Seite, PDF)
 ```
 
 ## Schnellstart
@@ -52,9 +55,21 @@ git clone https://github.com/mchytracek/comgen.git rechnungs-comic && cd rechnun
 scripts/init.sh "Wie Rechnungen sich selbst buchen" --format print-a4 --style explainer
 ```
 
-`init.sh` legt `comic/` an, fragt nach dem ComfyUI-Server (Enter = lokal bzw. zuletzt
-gewählt), benennt `origin` in `template` um und committet. Optionen: `--format`, `--style`,
-`--purpose explainer|story|product|social`, `--lang`, `--comfy-url`, `--keep-origin`, `--no-commit`.
+`init.sh` legt `comics/01-<slug>/` an (und den Verweis `comic` darauf), fragt nach dem
+ComfyUI-Server (Enter = lokal bzw. zuletzt gewählt), benennt `origin` in `template` um und committet.
+Optionen: `--format`, `--style`, `--purpose explainer|story|product|social`, `--lang`, `--comfy-url`,
+`--keep-origin`, `--no-commit`.
+
+Weitere Comics im selben Repo:
+
+```bash
+python3 tools/init_comic.py "Der zweite Band" --from 01   # Format, Stil, Figuren von comics/01-…
+python3 tools/comic.py list                               # alle Comics, * = aktiv
+python3 tools/comic.py use 01                             # aktiven Comic wechseln
+```
+
+Ältere Klone mit einem echten Ordner `comic/` werden beim nächsten `scripts/update-template.sh`
+(bzw. `comic.py list`) automatisch nach `comics/01-<slug>/` umgezogen – danach committen.
 
 Dann Claude Code im Ordner starten:
 

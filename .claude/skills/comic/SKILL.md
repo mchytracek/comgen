@@ -11,15 +11,22 @@ bevor du die Phase beginnst. Der Zustand liegt immer in `comic/comic.json`
 
 ## 0. Stand feststellen
 
-Dieses Repo ist **ein Comic** (Klon des comgen-Templates). Alles Comicspezifische liegt in `comic/`.
+Dieses Repo ist ein Klon des comgen-Templates und kann mehrere Comics enthalten:
+`comics/<nr>-<slug>/`, `comic` ist ein Verweis auf den aktiven. `python3 tools/comic.py list` zeigt sie
+(und zieht ein altes, echtes `comic/` automatisch nach `comics/01-…` um).
 
-- `comic/` fehlt → Titel, Format, Stil, Zweck erfragen bzw. ableiten, dann
+- Kein Comic vorhanden → Titel, Format, Stil, Zweck erfragen bzw. ableiten, dann
   `scripts/init.sh "<Titel>" [--format print-a4|print-us|print-a5-quer|web|social-4x5|social-1x1|social-9x16]
   [--style explainer|ligne-claire|us-comic|manga|graphic-novel] [--purpose explainer|story|product|social]
   [--comfy-url http://host:8188]`. `--comfy-url` nur, wenn der User einen anderen ComfyUI-Rechner nennt.
-- `comic/` existiert → `python3 tools/comic.py show`; beim ersten offenen Schritt weitermachen.
+- Der User will einen **neuen** Comic (weitere Geschichte, nächster Band) →
+  `python3 tools/init_comic.py "<Titel>" [--from <nr>] [--format …] [--style …] [--purpose …]`.
+  `--from` übernimmt Format, Stil und Figuren (Fotos + Referenzen) eines vorhandenen Comics – dann
+  entfällt Phase 2 bis auf neue Figuren. Der neue Comic wird aktiv.
+- Sonst: geht es um einen anderen als den aktiven Comic → `python3 tools/comic.py use <nr>`;
+  dann `python3 tools/comic.py show` und beim ersten offenen Schritt weitermachen.
 - `server_info` (comfy-mcp) einmal aufrufen. Läuft ComfyUI nicht → Skill `comgen-setup`.
-- Nach jeder Phase committen (`git add comic && git commit -m "<Phase>: …"`). Bilder, Seiten und
+- Nach jeder Phase committen (`git add comics && git commit -m "<Phase>: …"`). Bilder, Seiten und
   Fotos sind git-ignoriert, `comic.json`, `brief.md`, `story.md` werden versioniert.
 
 ## 1. Briefing → `brief.md`

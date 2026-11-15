@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Werkzeug für comic/comic.json: validate | show | formats | styles | layouts.
+"""Werkzeug für comic/comic.json: validate | show | list | use | formats | styles | layouts.
 
+  python3 tools/comic.py list            # alle Comics in comics/, * = aktiv
+  python3 tools/comic.py use 02          # aktiven Comic wechseln (Verweis comic → comics/02-…)
   python3 tools/comic.py validate
   python3 tools/comic.py show            # Seiten, Panels, Figuren, Status der Bilder
   python3 tools/comic.py formats         # Seitenformate (Druck, Web, Social)
@@ -17,9 +19,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import subprocess
 
-from _common import FORMATS, TEMPLATES, all_panels, cast_by_id, die, load_comic, page_geometry, project_dir
+from _common import COMIC, COMICS, FORMATS, REPO, TEMPLATES, all_panels, cast_by_id, die, load_comic, page_geometry, project_dir
 
 NAMED_LAYOUTS: dict[str, list[list[float]]] = {
     "splash": [[1]],
@@ -206,6 +210,88 @@ def cmd_layouts(a):
         print(f"  {k:12} {rows}")
 
 
+# ---------------------------------------------------------------------------
+# Mehrere Comics pro Repo: comics/<nr>-<slug>/, `comic` ist ein Verweis auf den aktiven.
+# ---------------------------------------------------------------------------
+def comics() -> list:
+    return sorted(d for d in COMICS.glob("*") if (d / "comic.json").exists())
+
+
+def find_comic(key: str):
+    """Comic per Nummer („2“, „02“), Ordnername oder Pfad."""
+    p = (REPO / key) if not os.path.isabs(key) else None
+    if p and (p / "comic.json").exists():
+        return p.resolve()
+    hits = [d for d in comics() if d.name == key or d.name.split("-", 1)[0].lstrip("0") == key.lstrip("0")
+            or d.name.split("-", 1)[-1] == key]
+    if len(hits) != 1:
+        die(f"Comic „{key}“ nicht eindeutig gefunden – vorhanden: {', '.join(d.name for d in comics()) or '(keine)'}")
+    return hits[0]
+
+
+def activate(pdir) -> None:
+    if COMIC.is_symlink():
+        COMIC.unlink()
+    elif COMIC.exists():
+        die(f"{COMIC} ist ein echter Ordner – erst umziehen (python3 tools/comic.py list zieht ihn nach comics/)")
+    COMIC.symlink_to(pdir.relative_to(REPO))
+
+
+def migrate_legacy() -> None:
+    """Alter Klon mit echtem Ordner comic/ → comics/01-<slug>/ + Verweis (git mv, falls versioniert)."""
+    if not COMIC.exists() or COMIC.is_symlink():
+        return
+    slug = (json.loads((COMIC / "comic.json").read_text(encoding="utf-8")).get("slug") or "comic") \
+        if (COMIC / "comic.json").exists() else "comic"
+    dst = COMICS / f"01-{slug}"
+    if dst.exists():
+        die(f"Umzug von comic/ nicht möglich: {dst.relative_to(REPO)} existiert schon")
+    COMICS.mkdir(exist_ok=True)
+    tracked = subprocess.run(["git", "-C", str(REPO), "ls-files", "--error-unmatch", "comic"],
+                             capture_output=True).returncode == 0
+    if tracked:
+        subprocess.run(["git", "-C", str(REPO), "mv", "comic", str(dst.relative_to(REPO))], check=True)
+        if COMIC.exists():  # git mv lässt ignorierte Dateien (Bilder, Fotos) zurück
+            for item in list(COMIC.iterdir()):
+                target = dst / item.name
+                if target.exists() and item.is_dir():
+                    for sub in item.rglob("*"):
+                        rel = sub.relative_to(item)
+                        if sub.is_file() and not (target / rel).exists():
+                            (target / rel).parent.mkdir(parents=True, exist_ok=True)
+                            sub.rename(target / rel)
+                elif not target.exists():
+                    item.rename(target)
+            import shutil
+            shutil.rmtree(COMIC)
+        # Fotos echter Personen gehören nicht ins Git (alte Regel ignorierte nur cast/*/photo*)
+        subprocess.run(["git", "-C", str(REPO), "rm", "-r", "-q", "--cached", "--ignore-unmatch",
+                        str((dst / "cast").relative_to(REPO))], check=True)
+    else:
+        COMIC.rename(dst)
+    activate(dst)
+    print(f"✔ comic/ umgezogen nach {dst.relative_to(REPO)}/ (comic ist jetzt ein Verweis darauf)"
+          + (" – bitte committen" if tracked else ""))
+
+
+def cmd_list(a):
+    migrate_legacy()
+    active = COMIC.resolve() if COMIC.is_symlink() else None
+    if not comics():
+        print("Noch kein Comic – scripts/init.sh \"<Titel>\" bzw. python3 tools/init_comic.py \"<Titel>\"")
+    for d in comics():
+        c = load_comic(d)
+        mark = "*" if d == active else " "
+        print(f"{mark} {d.name:36} {c.get('status', '?'):10} {c['format']:14} {len(c['pages'])} S.  „{c['title']}“")
+
+
+def cmd_use(a):
+    migrate_legacy()
+    pdir = find_comic(a.comic)
+    activate(pdir)
+    print(f"✔ aktiv: comic → {pdir.relative_to(REPO)}  („{load_comic(pdir)['title']}“)")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -214,6 +300,10 @@ def main():
         p = sub.add_parser(name)
         p.add_argument("--dir", dest="project", help="Comicordner (Default: comic/)")
         p.set_defaults(fn=fn)
+    sub.add_parser("list", help="alle Comics, * = aktiv").set_defaults(fn=cmd_list)
+    u = sub.add_parser("use", help="aktiven Comic wechseln")
+    u.add_argument("comic", help="Nummer (02), Ordner oder slug")
+    u.set_defaults(fn=cmd_use)
     a = ap.parse_args()
     a.fn(a)
 

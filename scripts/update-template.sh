@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Holt Verbesserungen aus dem Template-Repo (Skills, Tools, Workflows) in dieses Comic-Repo.
-# Der Ordner comic/ existiert im Template nicht, daher gibt es dort keine Konflikte.
+# Die Comics (comics/, Verweis comic) existieren im Template nicht, daher gibt es dort keine Konflikte.
+# Ältere Klone mit einem echten Ordner comic/ werden dabei nach comics/01-<slug>/ umgezogen.
 #
 #   scripts/update-template.sh            # Remote "template", Branch main
 #   scripts/update-template.sh <branch>
@@ -17,4 +18,5 @@ git fetch template "$branch"
 echo "Neu im Template:"
 git log --oneline "HEAD..template/$branch" || true
 git merge --no-edit "template/$branch"
+python3 tools/comic.py list   # zieht ein altes comic/ nach comics/ um (danach committen)
 echo "✔ Template-Stand übernommen. Claude Code neu starten, falls Skills/MCP geändert wurden."

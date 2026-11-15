@@ -10,7 +10,8 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-COMIC = REPO / "comic"
+COMIC = REPO / "comic"  # Verweis (Symlink) auf die aktive Geschichte in comics/
+COMICS = REPO / "comics"
 WORKFLOWS = REPO / "comfy" / "workflows"
 TEMPLATES = REPO / "templates"
 
@@ -107,7 +108,8 @@ def project_dir(arg: str | None = None) -> Path:
     if not p.is_absolute():
         p = Path.cwd() / p
     if not (p / "comic.json").exists():
-        die(f"Kein comic.json in {p} – erst `scripts/init.sh \"<Titel>\"` ausführen")
+        die(f"Kein comic.json in {p} – erst `scripts/init.sh \"<Titel>\"` (erster Comic) bzw. "
+            f"`python3 tools/init_comic.py \"<Titel>\"` (weiterer Comic) ausführen")
     return p.resolve()
 
 

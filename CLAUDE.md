@@ -5,12 +5,17 @@ Story, Seiten- und Panel-Skript sowie Lettering machst du selbst, Figuren und Pa
 erzeugt **ComfyUI** (über `comfy-mcp` bzw. die Python-Tools), `tools/layout.py` setzt Seiten
 mit Sprechblasen und exportiert PNG/PDF für Druck, Web und Social.
 
-## Repo-Modell: ein Klon = ein Comic
+## Repo-Modell: ein Klon = eine Comic-Reihe
 
-Dieses Repo ist ein **Template**. Für jeden Comic wird es geklont und mit
-`scripts/init.sh "<Titel>"` initialisiert.
+Dieses Repo ist ein **Template**. Es wird geklont und mit `scripts/init.sh "<Titel>"` initialisiert.
+Ein Klon kann mehrere Comics enthalten, z. B. mehrere Bände mit denselben Figuren.
 
-- **`comic/`** gehört dem Comic (Brief, Story, `comic.json`, Fotos, Bilder, Seiten). Im Template fehlt der Ordner.
+- **`comics/<nr>-<slug>/`** gehört je einem Comic (Brief, Story, `comic.json`, Fotos, Bilder, Seiten).
+- **`comic`** ist ein Verweis (Symlink, git-ignoriert) auf den **aktiven** Comic. Alle Tools und
+  Pfadangaben `comic/…` beziehen sich darauf; andere Comics mit `--dir comics/<ordner>`.
+- Weiterer Comic: `python3 tools/init_comic.py "<Titel>" [--from 01]` (`--from` übernimmt Format,
+  Stil und Figuren samt Fotos und Referenzen). Auflisten/wechseln: `python3 tools/comic.py list | use <nr>`.
+- Im Template fehlen `comics/` und `comic`.
 - **Alles andere** (`.claude/`, `tools/`, `comfy/`, `scripts/`, `templates/`, `schemas/`, `fonts/`)
   ist Template-Code. Verbesserungen gehören ins Template-Repo – den User darauf hinweisen.
   Updates holen: `scripts/update-template.sh`.

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Macht aus einem frischen Klon des Templates ein eigenes Comic-Repo.
+# Macht aus einem frischen Klon des Templates ein eigenes Comic-Repo und legt den ersten Comic
+# in comics/01-<slug>/ an (comic ist ein Verweis auf den aktiven Comic).
+# Weitere Comics im selben Repo: python3 tools/init_comic.py "<Titel>" [--from 01]
 #
 #   git clone https://github.com/mchytracek/comgen.git mein-comic && cd mein-comic
 #   scripts/init.sh "Wie Rechnungen sich selbst buchen" [--format print-a4] [--style explainer] [--purpose explainer]
@@ -21,16 +23,19 @@ while [[ $# -gt 0 ]]; do
     --no-commit)   commit=0 ;;
     --comfy-url)   comfy_url="${2:?--comfy-url braucht eine URL}"; shift ;;
     --comfy-url=*) comfy_url="${1#*=}" ;;
-    -h|--help)     sed -n 2,15p "$0"; exit 0 ;;
+    -h|--help)     sed -n 2,18p "$0"; exit 0 ;;
     *)             args+=("$1") ;;
   esac
   shift
 done
-[[ ${#args[@]} -ge 1 ]] || { sed -n 2,15p "$0"; exit 1; }
+[[ ${#args[@]} -ge 1 ]] || { sed -n 2,18p "$0"; exit 1; }
 
 step() { printf "\n\033[1m▶ %s\033[0m\n" "$*"; }
 
-[[ -d comic ]] && { echo "✖ comic/ existiert bereits – dieses Repo ist schon initialisiert"; exit 1; }
+if [[ -e comic ]] || compgen -G "comics/*/comic.json" >/dev/null; then
+  echo "✖ Dieses Repo ist schon initialisiert. Weiterer Comic: python3 tools/init_comic.py \"<Titel>\" [--from 01]"
+  exit 1
+fi
 
 step "ComfyUI-Server"
 config_home="${COMGEN_CONFIG:-$HOME/.config/comgen}"
@@ -70,7 +75,7 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   fi
   if [[ $commit == 1 ]]; then
     title=$(python3 -c 'import json;print(json.load(open("comic/comic.json"))["title"])')
-    git add comic
+    git add comics
     git commit -q -m "Comic initialisiert: $title" && echo "  ✔ commit: Comic initialisiert: $title"
   fi
 fi

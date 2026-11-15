@@ -1,10 +1,12 @@
 # --- generierte Medien (groß, reproduzierbar) ---
-comic/assets/
-comic/pages/
-comic/review/
-comic/.work/
-# Fotos echter Personen sind personenbezogen → nie versionieren
-comic/cast/*/photo*
+comics/*/assets/
+comics/*/pages/
+comics/*/review/
+comics/*/.work/
+# Fotos echter Personen sind personenbezogen → nie versionieren (ganzer Ordner, egal wie benannt)
+comics/*/cast/
+# Verweis auf den aktiven Comic (lokal, mit `python3 tools/comic.py use <nr>` wechseln)
+/comic
 
 # --- Python ---
 __pycache__/
