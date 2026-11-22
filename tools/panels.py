@@ -176,6 +176,8 @@ def cmd_generate(a) -> None:
             pid = pn["id"]
             if only and pid not in only:
                 continue
+            if not (pn.get("prompt") or "").strip():  # Feld ohne Bild oder festes Bild (Referenz) – nichts zu erzeugen
+                continue
             assets = pn.get("assets") or {}
             final = pdir / assets["image"] if assets.get("image") else None
             if final and final.exists() and not (a.force or a.reswap):

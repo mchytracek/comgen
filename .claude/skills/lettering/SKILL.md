@@ -26,6 +26,16 @@ python3 tools/layout.py sheet           # Übersicht → comic/review/sheet.png
 4. **Leserichtung:** erste Blase oben links; der Blick wandert Z-förmig. Zeiger kreuzen sich nicht.
 5. Seite neu rendern, prüfen, wiederholen. Nur `comic.json` ändern – nie das HTML.
 
+**Cover-Schriftzug:** `type: "title"` – große Bangers-Lettern mit Kontur und Schatten, zentriert
+in `pos.w`, Füllfarbe `color` (Default `palette.accent`), Größe über `size`. Reihenname + Band
+als zweiter, kleinerer `title` darüber. Im Cover-Bild oben ruhigen Himmel freihalten.
+
+**Sonderseiten** (Figurenvorstellung, Rückseite, Impressum): Panel-Felder `fit: "contain"` (Bild
+ganz zeigen, z. B. freigestellte Figurenreferenz), `pad: {"t","r","b","l"}` (Bildfläche einrücken,
+Platz für einen Steckbrief-Kasten), `bg` (Hintergrundfarbe), `frame: false` (kein Rahmen),
+`blank: true` (Feld ohne Bild, z. B. für eine Überschrift als `title`). Panels ohne `prompt`
+erzeugt `panels.py` nicht. `**Name**` in einem Erzählerkasten wird größer gesetzt.
+
 ## Formate
 
 | Format | Ausgabe | Hinweise |

@@ -68,6 +68,11 @@
                 "prompt": { "type": "string", "description": "Bildinhalt (englisch): Ort, Handlung, Requisiten – Figuren über cast" },
                 "cast": { "type": "array", "items": { "oneOf": [ { "type": "string" }, { "type": "object", "required": ["id"], "properties": { "id": {}, "where": { "type": "string" }, "action": { "type": "string" }, "expression": { "type": "string" }, "wear": { "type": "string" } } } ] } },
                 "seed": { "type": "integer" },
+                "fit": { "enum": ["cover", "contain"], "description": "contain = Bild ganz zeigen (z. B. Figurenreferenz)" },
+                "pad": { "type": "object", "description": "Bildfläche einrücken (Anteile t/r/b/l), z. B. Platz für Steckbrief", "properties": { "t": {}, "r": {}, "b": {}, "l": {} } },
+                "bg": { "type": "string", "description": "Hintergrundfarbe des Felds" },
+                "frame": { "type": "boolean", "description": "false = kein Panelrahmen" },
+                "blank": { "type": "boolean", "description": "Feld ohne Bild (Überschrift, Text) – wird nicht erzeugt" },
                 "focus": { "type": "object", "description": "Bildausschnitt bei Beschnitt (object-position), Anteile 0–1", "properties": { "x": {}, "y": {} } },
                 "bubbles": {
                   "type": "array",
@@ -75,12 +80,13 @@
                     "type": "object",
                     "required": ["text"],
                     "properties": {
-                      "type": { "enum": ["speech", "thought", "whisper", "shout", "caption", "sfx"] },
+                      "type": { "enum": ["speech", "thought", "whisper", "shout", "caption", "sfx", "title"] },
                       "who": { "type": "string", "description": "cast-id oder 'off'" },
                       "text": { "type": "string" },
                       "pos": { "oneOf": [ { "enum": ["tl", "tc", "tr", "ml", "mc", "mr", "bl", "bc", "br"] }, { "type": "object", "properties": { "x": {}, "y": {}, "w": {} } } ] },
                       "tail": { "oneOf": [ { "const": "none" }, { "type": "object", "properties": { "x": {}, "y": {} } } ] },
                       "rot": { "type": "number", "description": "nur sfx: Drehung in Grad" },
+                      "color": { "type": "string", "description": "nur title/sfx: Füllfarbe (CSS)" },
                       "size": { "type": "number", "description": "Faktor auf die Schriftgröße" }
                     }
                   }

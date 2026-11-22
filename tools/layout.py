@@ -15,6 +15,11 @@ Lettering kommt immer aus dem Code, nie aus dem Bildmodell. Blasen (panel.bubble
    "pos": "tl|tc|tr|ml|mc|mr|bl|bc|br" oder {"x": 0.05, "y": 0.1, "w": 0.4},
    "tail": {"x": 0.62, "y": 0.55} | "none"}
   pos {x, y} = linke obere Ecke der Blase, w = maximale Breite – alles Anteile (0–1) des Panels.
+  "title": großer Cover-Schriftzug (Font wie sfx, Kontur + Schatten), "color" = Füllfarbe,
+  pos.w = Breite, Text zentriert.
+  Panel-Felder für Sonderseiten (Figurenvorstellung, Rückseite): "fit": "contain" (Bild ganz zeigen),
+  "pad": {"t","r","b","l"} (Bildfläche einrücken, Anteile), "bg": Hintergrundfarbe, "frame": false
+  (kein Rahmen), "blank": true (Feld ohne Bild, z. B. für Überschriften).
   tail = Mund der sprechenden Figur (Anteil des Panels) – der Zeiger endet kurz davor;
   ohne Angabe zeigt er nach unten.
 Gerendert wird mit einem Headless-Chrome (eigenes Profil in comic/.work/chrome, das laufende
@@ -72,10 +77,15 @@ svg.under { z-index: 1; } svg.over { z-index: 3; }
 .b.caption { background: var(--cap); border: %(stroke).3fcqw solid var(--ink); border-radius: .25cqw;
      padding: .55em .8em; text-align: left; font-family: '%(caption_font)s', 'Comic Sans MS', sans-serif;
      --mw: 62%%; }
-.b.sfx { font-family: '%(sfx)s', Impact, 'Arial Black', sans-serif; font-weight: 400; color: var(--accent);
+.b.caption b { font-size: 1.22em; }  /* **Name** im Kasten hervorheben, z. B. Steckbrief */
+.b.sfx { font-family: '%(sfx)s', Impact, 'Arial Black', sans-serif; font-weight: 400; color: var(--c, var(--accent));
      font-size: calc(%(sfxsize).2fcqw * var(--s, 1)); letter-spacing: .03em; line-height: 1; -webkit-text-stroke: %(sfxstroke).3fcqw var(--ink);
      paint-order: stroke fill; transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, -8deg));
      --mw: 90%%; text-transform: uppercase; }
+.b.title { font-family: '%(sfx)s', Impact, 'Arial Black', sans-serif; font-weight: 400; color: var(--c, var(--accent));
+     font-size: calc(%(titlesize).2fcqw * var(--s, 1)); letter-spacing: .03em; line-height: 1.02; width: var(--mw, 92%%);
+     max-width: none; -webkit-text-stroke: %(titlestroke).3fcqw var(--ink); paint-order: stroke fill;
+     text-shadow: .28cqw .32cqw 0 var(--ink); }
 .pageno { position: absolute; bottom: %(pnb)dpx; width: 100%%; text-align: center; font: 1.1cqw Helvetica, Arial;
      color: #555; }
 @page { size: %(pdfsize)s; margin: 0; }
@@ -172,6 +182,8 @@ def bubble_html(b: dict, idx_by_kind: dict) -> str:
         style.append(POS_CSS[pos])
     if kind == "sfx" and "rot" in b:
         style.append(f"--rot:{b['rot']}deg")
+    if b.get("color"):  # nur title/sfx: Füllfarbe
+        style.append(f"--c:{b['color']}")
     if b.get("size"):  # Faktor auf die Schriftgröße, z. B. 1.3
         style.append(f"--s:{float(b['size'])}")
     tail = ""
@@ -190,15 +202,28 @@ def page_html(c: dict, pg: dict, geo: dict, pdir: Path, number: int | None) -> s
         src = pdir / img if img else None
         if src and src.exists():
             f = pn.get("focus") or {}
-            art = (f'<img src="{src.resolve().as_uri()}" style="object-position:{f.get("x", 0.5) * 100:.1f}% '
-                   f'{f.get("y", 0.5) * 100:.1f}%">')
+            ist = (f'object-position:{f.get("x", 0.5) * 100:.1f}% {f.get("y", 0.5) * 100:.1f}%;'
+                   f'object-fit:{pn.get("fit", "cover")}')
+            if pn.get("pad"):  # Bildfläche innerhalb des Panels (Anteile), z. B. Platz für einen Steckbrief
+                pd = {"t": 0, "r": 0, "b": 0, "l": 0, **pn["pad"]}
+                ist += (f';position:absolute;left:{pd["l"] * 100:.2f}%;top:{pd["t"] * 100:.2f}%;'
+                        f'width:{(1 - pd["l"] - pd["r"]) * 100:.2f}%;height:{(1 - pd["t"] - pd["b"]) * 100:.2f}%')
+            art = f'<img src="{src.resolve().as_uri()}" style="{ist}">'
+        elif pn.get("blank"):
+            art = ""
         else:
             art = f'<div class="ph"><b>{pn["id"]} · {pn.get("shot", "")}</b>{html.escape(pn.get("prompt", ""))}</div>'
+        astyle = []
+        if pn.get("bg"):
+            astyle.append(f"background:{pn['bg']}")
+        if pn.get("frame") is False:
+            astyle.append("border:0")
+        astyle = f' style="{";".join(astyle)}"' if astyle else ""
         idx: dict = {}
         bubbles = "".join(bubble_html(b, idx) for b in pn.get("bubbles", []))
         style = (f"left:{x / geo['W'] * 100:.4f}%;top:{y / geo['H'] * 100:.4f}%;"
                  f"width:{w / geo['W'] * 100:.4f}%;height:{h / geo['H'] * 100:.4f}%")
-        parts.append(f'<div class="panel{full}" id="{pn["id"]}" style="{style}"><div class="art">{art}</div>'
+        parts.append(f'<div class="panel{full}" id="{pn["id"]}" style="{style}"><div class="art"{astyle}>{art}</div>'
                      f'<svg class="tails under"></svg>{bubbles}<svg class="tails over"></svg></div>')
     if number is not None:
         parts.append(f'<div class="pageno">{number}</div>')
@@ -225,6 +250,7 @@ def document(c: dict, pages_html: list[str], geo: dict) -> str:
         "fontfaces": "\n".join(faces), **pal, "W": geo["W"], "H": geo["H"],
         "dialogue": fonts["dialogue"], "caption_font": fonts["caption"], "sfx": fonts["sfx"],
         "letter": letter, "letter2": letter * 1.12, "sfxsize": letter * 3.2, "sfxstroke": letter * 0.09,
+        "titlesize": letter * 4.2, "titlestroke": letter * 0.22,
         "stroke": 0.16 if geo["W"] > 2000 else 0.22, "stroke2": 0.32 if geo["W"] > 2000 else 0.4,
         "border": 0.22 if geo["W"] > 2000 else 0.3,
         "upper": "text-transform: uppercase;" if (st.get("lettering") or {}).get("uppercase") else "",
@@ -258,7 +284,7 @@ def cmd_render(a) -> None:
     hdir.mkdir(parents=True, exist_ok=True)
     pages = [(i, pg) for i, pg in enumerate(c["pages"], 1) if not wanted or pg["id"] in wanted]
     missing = [pn["id"] for _, pg in pages for pn in pg["panels"]
-               if not ((pn.get("assets") or {}).get("image") and (pdir / pn["assets"]["image"]).exists())]
+               if not pn.get("blank") and not ((pn.get("assets") or {}).get("image") and (pdir / pn["assets"]["image"]).exists())]
     if missing:
         print(f"⚠ ohne Bild (Platzhalter): {', '.join(missing)}")
     if not a.no_png:

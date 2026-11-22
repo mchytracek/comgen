@@ -38,7 +38,7 @@ NAMED_LAYOUTS: dict[str, list[list[float]]] = {
     "strip-3": [[1, 1, 1]],
     "strip-4": [[1, 1, 1, 1]],
 }
-BUBBLE_TYPES = {"speech", "thought", "whisper", "shout", "caption", "sfx"}
+BUBBLE_TYPES = {"speech", "thought", "whisper", "shout", "caption", "sfx", "title"}
 POSITIONS = {"tl", "tc", "tr", "ml", "mc", "mr", "bl", "bc", "br"}
 SHOTS = {"establishing", "wide", "full", "medium", "close", "extreme-close", "over-shoulder", "bird", "worm"}
 MAX_WORDS = 30
@@ -122,7 +122,8 @@ def validate(c: dict, pdir=None) -> tuple[list[str], list[str]]:
             if nid in seen:
                 errs.append(f"{where}: doppelte id")
             seen.add(nid)
-            if not (pn.get("prompt") or "").strip() and not (pn.get("assets") or {}).get("image"):
+            if not (pn.get("prompt") or "").strip() and not (pn.get("assets") or {}).get("image") \
+                    and not pn.get("blank"):
                 errs.append(f"{where}: prompt fehlt")
             if pn.get("shot") and pn["shot"] not in SHOTS:
                 warns.append(f"{where}: shot {pn['shot']!r} unbekannt ({', '.join(sorted(SHOTS))})")
